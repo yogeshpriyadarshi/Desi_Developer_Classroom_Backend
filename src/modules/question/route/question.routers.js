@@ -1,9 +1,14 @@
 const express = require("express");
 const QuestionSchema = require("../schema/Question.Schema");
 
-const route = express.Router();
+const router = express.Router();
 
-route.post("/create", async (req, res) => {
+const upload = require("../../media/upload");
+const { bulkUploadQuestions } = require("../controller/question.controller");
+
+router.post("/bulk-upload", upload.single("file"), bulkUploadQuestions);
+
+router.post("/create", async (req, res) => {
   try {
     const {
       conceptId,
@@ -48,7 +53,7 @@ route.post("/create", async (req, res) => {
   }
 });
 
-route.get("/fetch-all", async (req, res) => {
+router.get("/fetch-all", async (req, res) => {
   try {
     const questions = await QuestionSchema.find({ status: "active" });
     res.status(200).json({
@@ -66,7 +71,7 @@ route.get("/fetch-all", async (req, res) => {
 });
 
 // fetch inActive user
-route.get("/fetch-inActive", async (req, res) => {
+router.get("/fetch-inActive", async (req, res) => {
   try {
     const questions = await QuestionSchema.find({ status: "inActive" });
     res.status(200).json({
@@ -84,7 +89,7 @@ route.get("/fetch-inActive", async (req, res) => {
 });
 
 // fetch question by conceptId
-route.get("/fetch-by-concept/:conceptId", async (req, res) => {
+router.get("/fetch-by-concept/:conceptId", async (req, res) => {
   try {
     // conceptId is array of conceptId
     const { conceptId } = req.params;
@@ -106,7 +111,7 @@ route.get("/fetch-by-concept/:conceptId", async (req, res) => {
 });
 
 // fetch question by id
-route.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const question = await QuestionSchema.findById(id).populate("conceptId");
@@ -124,7 +129,7 @@ route.get("/:id", async (req, res) => {
   }
 });
 
-route.patch("/:id/toggle-status", async (req, res) => {
+router.patch("/:id/toggle-status", async (req, res) => {
   try {
     const { id } = req.params;
     const question = await QuestionSchema.findById(id);
@@ -150,7 +155,7 @@ route.patch("/:id/toggle-status", async (req, res) => {
   }
 });
 
-route.put("/:id/update", async (req, res) => {
+router.put("/:id/update", async (req, res) => {
   try {
     const { id } = req.params;
     const newQuestion = req.body;
@@ -179,4 +184,4 @@ route.put("/:id/update", async (req, res) => {
   }
 });
 
-module.exports = route;
+module.exports = router;
