@@ -12,7 +12,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend URL EXACT
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5555",
+      "https://desi-developer-classroom-frontend.onrender.com",
+      "https://quiz-frontend-1.onrender.com",
+    ], // your frontend URL EXACT
     credentials: true, // very important
   }),
 );
