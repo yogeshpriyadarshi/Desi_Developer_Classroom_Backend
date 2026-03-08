@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "http://localhost:5555",
+      "http://localhost:5174",
       "https://desi-developer-classroom-frontend.onrender.com",
       "https://quiz-frontend-1.onrender.com",
     ], // your frontend URL EXACT

@@ -9,6 +9,7 @@ const subjectSchema = new mongoose.Schema(
       enum: ["active", "inactive"],
       default: "active",
     },
+    isPremium: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

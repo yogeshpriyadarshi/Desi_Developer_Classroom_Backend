@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const questionSchema = new mongoose.Schema(
   {
-    conceptId: [
+    concept: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Concept",
@@ -46,6 +46,7 @@ const questionSchema = new mongoose.Schema(
       enum: ["active", "inActive"],
       default: "inActive",
     },
+    isPremium: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

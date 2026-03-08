@@ -1,5 +1,6 @@
 const express = require("express");
 const UserSchema = require("./user.mdoel");
+const authMiddleware = require("../auth/auth.middleware");
 
 const route = express.Router();
 
@@ -40,27 +41,43 @@ route.post("/create", async (req, res) => {
   }
 });
 
-//update profile
-route.put("/:id/update-profile", async (req, res) => {
+// get profile
+route.get("/profile", authMiddleware, async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(200).json({
-        success: false,
-        message: "User ID is required",
-      });
-    }
-
-    let user = await UserSchema.findById(id);
+    const user = await UserSchema.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(200).json({
         success: false,
         message: "User not found",
       });
     }
-    const { firstName, lastName, email, password } = req.body;
+    res.status(200).json({
+      success: true,
+      message: "User profile fetched successfully",
+      user,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
 
-    if (!firstName || !lastName || !email || !password) {
+//update profile
+route.put("/profile", authMiddleware, async (req, res) => {
+  try {
+    let user = await UserSchema.findById(req.user.id);
+    if (!user) {
+      return res.status(200).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const { firstName, lastName, phoneNumber, gender } = req.body;
+
+    if (!firstName || !lastName || !phoneNumber || !gender) {
       return res.status(200).json({
         success: false,
         message: "All fields are required",
@@ -68,12 +85,12 @@ route.put("/:id/update-profile", async (req, res) => {
     }
 
     user = await UserSchema.findByIdAndUpdate(
-      id,
+      req.user.id,
       {
         firstName,
         lastName,
-        email,
-        password,
+        phoneNumber,
+        gender,
       },
       { new: true },
     );
