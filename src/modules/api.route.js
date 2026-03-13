@@ -12,5 +12,6 @@ route.use("/subjects", require("./subject/subject.routes"));
 route.use("/topics", require("./topic/topic.routes"));
 route.use("/concepts", require("./concept/concept.routers"));
 route.use("/questions", require("./question/route/question.routers"));
+route.use("/task-management", require("./taskManagement/routers/taskRouter"));
 
 module.exports = route;

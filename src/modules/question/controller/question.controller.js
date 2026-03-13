@@ -1,5 +1,5 @@
 const XLSX = require("xlsx");
-const Question = require("../models/Question");
+const Question = require("../schema/Question.Schema");
 
 exports.bulkUploadQuestions = async (req, res) => {
   try {
