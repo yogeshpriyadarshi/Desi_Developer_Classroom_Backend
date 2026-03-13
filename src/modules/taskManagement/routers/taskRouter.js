@@ -19,7 +19,11 @@ const {
   updateProject,
   deleteProject,
 } = require("../controllers/project.controller");
-const { addTaskLog } = require("../controllers/task-log.controller");
+const {
+  addTaskLog,
+  getTaskLog,
+  getTaskLogByDate,
+} = require("../controllers/task-log.controller");
 
 const router = express.Router();
 
@@ -64,5 +68,10 @@ router.get("/tasks/:id", authMiddleware, getTaskById);
 
 // add task log
 router.post("/task-log", authMiddleware, addTaskLog);
+// get task log by date
+router.get("/task-log/date/:date", authMiddleware, getTaskLogByDate);
+
+// get task log
+router.get("/task-log/:taskId", authMiddleware, getTaskLog);
 
 module.exports = router;

@@ -9,6 +9,7 @@ const addTask = async (req, res) => {
     const {
       title,
       description,
+      priority,
       recurrenceType,
       interval,
       daysOfWeek,
@@ -30,6 +31,7 @@ const addTask = async (req, res) => {
       description,
       category,
       user: req.user.id,
+      priority,
       recurrenceType,
       daysOfWeek,
       dayOfMonth,

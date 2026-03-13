@@ -14,23 +14,24 @@ const taskLogSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Productivity score (1–10)
+    status: {
+      type: String,
+      enum: ["pending", "in-progress", "completed"],
+      default: "pending",
+    },
+
     productivity: {
       type: Number,
       min: 1,
       max: 10,
-      default: 5,
     },
 
-    // Urgency score (1–10)
     urgency: {
       type: Number,
       min: 1,
       max: 10,
-      default: 5,
     },
 
-    // Time spent on task (minutes)
     timeSpent: {
       type: Number,
       min: 0,
@@ -44,5 +45,10 @@ const taskLogSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+/*
+Ensure one log per task per user per day
+*/
+taskLogSchema.index({ task: 1, user: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model("TaskLog", taskLogSchema);

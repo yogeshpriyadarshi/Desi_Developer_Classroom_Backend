@@ -20,6 +20,16 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
 
     recurrenceType: {
       type: String,
