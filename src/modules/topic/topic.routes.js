@@ -3,17 +3,18 @@ const TopicSchema = require("./topic.model");
 
 const route = express.Router();
 
+// create topic
 route.post("/create", async (req, res) => {
   try {
-    const { topicName, description, subjectId } = req.body;
-    if (!topicName || !subjectId) {
+    const { name, description, subject } = req.body;
+    if (!name || !subject) {
       return res.status(200).json({
         success: false,
         message: "Topic name and subject ID are required",
       });
     }
 
-    const topic = await TopicSchema.findOne({ topicName });
+    const topic = await TopicSchema.findOne({ name });
     if (topic) {
       return res.status(200).json({
         success: false,
@@ -22,14 +23,14 @@ route.post("/create", async (req, res) => {
     }
 
     const createdTopic = await TopicSchema.create({
-      topicName,
+      name,
       description,
-      subjectId,
+      subject,
     });
     res.status(201).json({
       success: true,
       message: "Topic created successfully",
-      createdTopic,
+      topic: createdTopic,
     });
   } catch (err) {
     console.log("error", err);
@@ -40,6 +41,7 @@ route.post("/create", async (req, res) => {
   }
 });
 
+// get all active topics
 route.get("/fetch-all", async (req, res) => {
   try {
     const topics = await TopicSchema.find({ status: "active" });
@@ -61,7 +63,10 @@ route.get("/fetch-all", async (req, res) => {
 route.get("/fetch-by-subject/:subjectId", async (req, res) => {
   try {
     const { subjectId } = req.params;
-    const topics = await TopicSchema.find({ subjectId, status: "active" });
+    const topics = await TopicSchema.find({
+      subject: subjectId,
+      status: "active",
+    }).populate("subject");
     res.status(200).json({
       success: true,
       message: "Topics fetched successfully",
@@ -87,6 +92,42 @@ route.get("/search", async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Topic fetched successfully",
+      topic,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+// update topic
+route.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, subject } = req.body;
+    if (!name || !subject) {
+      return res.status(200).json({
+        success: false,
+        message: "Topic name and subject ID are required",
+      });
+    }
+    const topic = await TopicSchema.findById(id);
+    if (!topic) {
+      return res.status(200).json({
+        success: false,
+        message: "Topic not found",
+      });
+    }
+    topic.name = name;
+    topic.description = description;
+    topic.subject = subject;
+    await topic.save();
+    res.status(200).json({
+      success: true,
+      message: "Topic updated successfully",
       topic,
     });
   } catch (err) {

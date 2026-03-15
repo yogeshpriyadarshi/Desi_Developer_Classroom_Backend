@@ -5,15 +5,15 @@ const route = express.Router();
 
 route.post("/create", async (req, res) => {
   try {
-    const { subjectName, description } = req.body;
-    if (!subjectName) {
+    const { name, description } = req.body;
+    if (!name) {
       return res.status(200).json({
         success: false,
         message: "Subject name is required",
       });
     }
 
-    const subject = await SubjectSchema.findOne({ subjectName });
+    const subject = await SubjectSchema.findOne({ name });
     if (subject) {
       return res.status(200).json({
         success: false,
@@ -22,7 +22,7 @@ route.post("/create", async (req, res) => {
     }
 
     const createdSubject = await SubjectSchema.create({
-      subjectName,
+      name,
       description,
     });
     res.status(201).json({
@@ -46,6 +46,43 @@ route.get("/fetch-all", async (req, res) => {
       success: true,
       message: "Subjects fetched successfully",
       subjects,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+// update subject
+
+route.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    if (!name) {
+      return res.status(200).json({
+        success: false,
+        message: "Subject name is required",
+      });
+    }
+    const subject = await SubjectSchema.findById(id);
+    if (!subject) {
+      return res.status(200).json({
+        success: false,
+        message: "Subject not found",
+      });
+    }
+    subject.name = name;
+    subject.description = description;
+    await subject.save();
+    res.status(200).json({
+      success: true,
+      message: "Subject updated successfully",
+      subject,
     });
   } catch (err) {
     console.log("error", err);

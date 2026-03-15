@@ -10,30 +10,17 @@ router.post("/bulk-upload", upload.single("file"), bulkUploadQuestions);
 
 router.post("/create", async (req, res) => {
   try {
-    const {
-      conceptId,
-      question,
-      options,
-      correctAnswer,
-      difficulty,
-      explanation,
-    } = req.body;
-    if (
-      !conceptId ||
-      !question ||
-      !options ||
-      !correctAnswer ||
-      !difficulty ||
-      !explanation
-    ) {
+    const { topic, question, options, correctAnswer, difficulty, explanation } =
+      req.body;
+    if (!topic || !question) {
       return res.json({
         success: false,
         message: "All fields are required",
       });
     }
     const createdQuestion = await QuestionSchema.create({
-      conceptId,
-      question,
+      topic,
+      questionText: question,
       options,
       correctAnswer,
       difficulty,
@@ -53,49 +40,11 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.get("/fetch-all", async (req, res) => {
+// fetch all question by status
+router.get("/fetch-all/:status", async (req, res) => {
   try {
-    const questions = await QuestionSchema.find({ status: "active" });
-    res.status(200).json({
-      success: true,
-      message: "Question fetched successfully",
-      questions,
-    });
-  } catch (err) {
-    console.log("error", err);
-    return res.status(200).json({
-      success: false,
-      message: "Something went wrong",
-    });
-  }
-});
-
-// fetch inActive user
-router.get("/fetch-inActive", async (req, res) => {
-  try {
-    const questions = await QuestionSchema.find({ status: "inActive" });
-    res.status(200).json({
-      success: true,
-      message: "Question fetched successfully",
-      questions,
-    });
-  } catch (err) {
-    console.log("error", err);
-    return res.status(200).json({
-      success: false,
-      message: "Something went wrong",
-    });
-  }
-});
-
-// fetch question by conceptId
-router.get("/fetch-by-concept/:conceptId", async (req, res) => {
-  try {
-    // conceptId is array of conceptId
-    const { conceptId } = req.params;
-    const questions = await QuestionSchema.find({
-      conceptId: { $in: conceptId },
-    }).populate("conceptId");
+    const { status } = req.params;
+    const questions = await QuestionSchema.find({ status: status });
     res.status(200).json({
       success: true,
       message: "Question fetched successfully",
@@ -114,7 +63,7 @@ router.get("/fetch-by-concept/:conceptId", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const question = await QuestionSchema.findById(id).populate("conceptId");
+    const question = await QuestionSchema.findById(id).populate("topic");
     res.status(200).json({
       success: true,
       message: "Question fetched successfully",
@@ -123,6 +72,40 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.log("error", err);
     return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+// fetch question by topicId (status optional)
+router.get("/fetch-by-topic/:topicId", async (req, res) => {
+  try {
+    const { topicId } = req.params;
+    const { status, difficulty, isPremium } = req.query;
+
+    let filter = { topic: topicId };
+
+    if (status) {
+      filter.status = status;
+    }
+    if (difficulty) {
+      filter.difficulty = difficulty;
+    }
+    if (isPremium) {
+      filter.isPremium = isPremium;
+    }
+
+    const questions = await QuestionSchema.find(filter).populate("topic");
+
+    res.status(200).json({
+      success: true,
+      message: "Question fetched successfully",
+      questions,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(500).json({
       success: false,
       message: "Something went wrong",
     });
@@ -155,7 +138,7 @@ router.patch("/:id/toggle-status", async (req, res) => {
   }
 });
 
-router.put("/:id/update", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const newQuestion = req.body;
@@ -163,7 +146,7 @@ router.put("/:id/update", async (req, res) => {
     const question = await QuestionSchema.findByIdAndUpdate(
       id,
       newQuestion,
-    ).populate("conceptId");
+    ).populate("topic");
     if (!question) {
       return res.status(200).json({
         success: false,

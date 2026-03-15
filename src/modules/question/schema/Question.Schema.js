@@ -2,12 +2,11 @@ const mongoose = require("mongoose");
 
 const questionSchema = new mongoose.Schema(
   {
-    concept: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Concept",
-      },
-    ],
+    topic: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Topic",
+      required: true,
+    },
     questionText: {
       type: String,
       required: true,
@@ -22,13 +21,14 @@ const questionSchema = new mongoose.Schema(
         },
         message: "Question must have exactly 5 options",
       },
+      default: ["", "", "", "", ""],
     },
 
     correctAnswer: {
       type: Number, // index (0,1,2,3,4)
-      required: true,
       min: 0,
       max: 4,
+      default: 0,
     },
 
     difficulty: {
@@ -43,8 +43,8 @@ const questionSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["active", "inActive"],
-      default: "inActive",
+      enum: ["active", "inactive"],
+      default: "inactive",
     },
     isPremium: { type: Boolean, default: false },
   },
