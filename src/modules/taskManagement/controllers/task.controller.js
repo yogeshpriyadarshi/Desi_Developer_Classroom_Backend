@@ -54,11 +54,70 @@ const addTask = async (req, res) => {
   }
 };
 
-const getTask = async (req, res) => {
+// get all active task
+const getAllTask = async (req, res) => {
+  try {
+    const tasks = await Task.find({
+      user: req.user.id,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "task is fetched",
+      tasks,
+    });
+  } catch (err) {
+    return res.status(200).json({
+      success: false,
+      message: "task is not fetched",
+    });
+  }
+};
+
+// get all active task
+const getAllActiveTask = async (req, res) => {
+  try {
+    const tasks = await Task.find({
+      user: req.user.id,
+      isActive: true,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "task is fetched",
+      tasks,
+    });
+  } catch (err) {
+    return res.status(200).json({
+      success: false,
+      message: "task is not fetched",
+    });
+  }
+};
+
+const getTaskByCategory = async (req, res) => {
   try {
     const tasks = await Task.find({
       user: req.user.id,
       category: req.params.categoryId,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "task is fetched",
+      tasks,
+    });
+  } catch (err) {
+    return res.status(200).json({
+      success: false,
+      message: "task is not fetched",
+    });
+  }
+};
+
+const getActiveTaskByCategory = async (req, res) => {
+  try {
+    const tasks = await Task.find({
+      user: req.user.id,
+      category: req.params.categoryId,
+      isActive: true,
     });
     return res.status(200).json({
       success: true,
@@ -89,4 +148,32 @@ const getTaskById = async (req, res) => {
   }
 };
 
-module.exports = { addTask, getTask, getTaskById };
+// toogle the task
+
+const toogleTask = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    task.isActive = !task.isActive;
+    await task.save();
+    return res.status(200).json({
+      success: true,
+      message: "task is toggled",
+      task,
+    });
+  } catch (err) {
+    return res.status(200).json({
+      success: false,
+      message: "task is not toggled",
+    });
+  }
+};
+
+module.exports = {
+  addTask,
+  getAllTask,
+  getAllActiveTask,
+  getActiveTaskByCategory,
+  getTaskById,
+  getTaskByCategory,
+  toogleTask,
+};

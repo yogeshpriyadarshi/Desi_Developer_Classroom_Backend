@@ -26,6 +26,11 @@ const taskSchema = new mongoose.Schema(
       default: "medium",
     },
 
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
     isCompleted: {
       type: Boolean,
       default: false,

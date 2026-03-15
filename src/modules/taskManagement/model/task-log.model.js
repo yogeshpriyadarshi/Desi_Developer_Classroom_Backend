@@ -14,6 +14,8 @@ const taskLogSchema = new mongoose.Schema(
       required: true,
     },
 
+    description: String,
+
     status: {
       type: String,
       enum: ["pending", "in-progress", "completed"],

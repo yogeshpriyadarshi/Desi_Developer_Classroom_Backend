@@ -11,6 +11,11 @@ const {
   addTask,
   getTask,
   getTaskById,
+  getAllTask,
+  getTaskByCategory,
+  toogleTask,
+  getAllActiveTask,
+  getActiveTaskByCategory,
 } = require("../controllers/task.controller");
 const {
   addProject,
@@ -61,13 +66,30 @@ router.delete("/categories/:id", authMiddleware, deleteCategory);
 router.post("/tasks/category/:categoryId", authMiddleware, addTask);
 
 // get all task of user
-router.get("/tasks/category/:categoryId", authMiddleware, getTask);
+router.get("/tasks", authMiddleware, getAllTask);
+
+// get all active task of user
+router.get("/tasks/active", authMiddleware, getAllActiveTask);
+
+// get all task of user by category
+router.get("/tasks/category/:categoryId", authMiddleware, getTaskByCategory);
+
+// toggle task
+router.put("/tasks/:id/active", authMiddleware, toogleTask);
+
+// get all active task of user by category
+router.get(
+  "/tasks/active/category/:categoryId",
+  authMiddleware,
+  getActiveTaskByCategory,
+);
 
 // get single task
 router.get("/tasks/:id", authMiddleware, getTaskById);
 
 // add task log
 router.post("/task-log", authMiddleware, addTaskLog);
+
 // get task log by date
 router.get("/task-log/date/:date", authMiddleware, getTaskLogByDate);
 
