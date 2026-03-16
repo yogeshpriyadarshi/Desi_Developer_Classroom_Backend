@@ -16,7 +16,9 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "https://desi-developer-classroom-frontend.onrender.com",
+      "https://desi-developer-classroom-admin.onrender.com",
       "https://quiz-frontend-1.onrender.com",
+      "https://quiz-admin-1.onrender.com",
     ], // your frontend URL EXACT
     credentials: true, // very important
   }),
