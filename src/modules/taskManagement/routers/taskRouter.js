@@ -28,6 +28,7 @@ const {
   addTaskLog,
   getTaskLog,
   getTaskLogByDate,
+  updateTaskLogByTaskId,
 } = require("../controllers/task-log.controller");
 
 const router = express.Router();
@@ -95,5 +96,8 @@ router.get("/task-log/date/:date", authMiddleware, getTaskLogByDate);
 
 // get task log
 router.get("/task-log/:taskId", authMiddleware, getTaskLog);
+
+// update task log
+router.put("/task-log/:taskId", authMiddleware, updateTaskLogByTaskId);
 
 module.exports = router;

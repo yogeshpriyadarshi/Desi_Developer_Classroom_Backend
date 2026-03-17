@@ -2,7 +2,15 @@ const taskLogSchema = require("../model/task-log.model");
 
 const addTaskLog = async (req, res) => {
   try {
-    const { task, status, productivity, urgency, timeSpent, date } = req.body;
+    const {
+      task,
+      description,
+      status,
+      productivity,
+      urgency,
+      timeSpent,
+      date,
+    } = req.body;
     if (!task || !status || !productivity || !urgency || !timeSpent || !date) {
       return res.status(400).json({
         success: false,
@@ -11,6 +19,7 @@ const addTaskLog = async (req, res) => {
     }
     const taskLog = await taskLogSchema.create({
       task,
+      description,
       user: req.user.id,
       status,
       productivity,
@@ -80,4 +89,44 @@ const getTaskLogByDate = async (req, res) => {
   }
 };
 
-module.exports = { addTaskLog, getTaskLog, getTaskLogByDate };
+// Update Task Log for by taskId
+
+const updateTaskLogByTaskId = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const taskLogs = await taskLogSchema
+      .findByIdAndUpdate(
+        taskId,
+        {
+          user: req.user.id,
+          ...req.body,
+        },
+        { new: true },
+      )
+      .populate("task");
+    if (!taskLogs) {
+      return res.status(404).json({
+        success: false,
+        message: "Task log not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Task log updated successfully",
+      taskLogs,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      message: "Task log update failed",
+    });
+  }
+};
+
+module.exports = {
+  addTaskLog,
+  getTaskLog,
+  getTaskLogByDate,
+  updateTaskLogByTaskId,
+};
