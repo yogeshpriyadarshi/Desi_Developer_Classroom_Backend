@@ -167,7 +167,7 @@ const verifyToken = async (req, res) => {
       message: "token is valid",
     });
   } else {
-    return res.status(200).json({
+    return res.status(401).json({
       success: false,
       message: "token is not valid",
     });
