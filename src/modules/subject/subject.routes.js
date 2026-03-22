@@ -7,7 +7,7 @@ route.post("/create", async (req, res) => {
   try {
     const { name, description } = req.body;
     if (!name) {
-      return res.status(200).json({
+      return res.status(400).json({
         success: false,
         message: "Subject name is required",
       });
@@ -15,7 +15,7 @@ route.post("/create", async (req, res) => {
 
     const subject = await SubjectSchema.findOne({ name });
     if (subject) {
-      return res.status(200).json({
+      return res.status(400).json({
         success: false,
         message: "Subject already exists",
       });
@@ -32,14 +32,14 @@ route.post("/create", async (req, res) => {
     });
   } catch (err) {
     console.log("error", err);
-    return res.status(200).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong",
     });
   }
 });
 
-route.get("/fetch-all", async (req, res) => {
+route.get("/", async (req, res) => {
   try {
     const subjects = await SubjectSchema.find({ status: "active" });
     res.status(200).json({

@@ -5,26 +5,27 @@ const route = express.Router();
 
 route.post("/create", async (req, res) => {
   try {
-    const { conceptName, topicId, description } = req.body;
-    if (!conceptName || !topicId) {
-      return res.status(200).json({
+    const { name, topic, description, content } = req.body;
+    if (!name || !topic) {
+      return res.status(400).json({
         success: false,
         message: "ConceptName and topicId are required",
       });
     }
 
-    const concept = await ConceptSchema.findOne({ conceptName });
+    const concept = await ConceptSchema.findOne({ name });
     if (concept) {
-      return res.status(200).json({
+      return res.status(400).json({
         success: false,
         message: "Concept already exists",
       });
     }
 
     const createdConcept = await ConceptSchema.create({
-      conceptName,
-      topicId,
+      name,
+      topic,
       description,
+      content,
     });
     res.status(201).json({
       success: true,
@@ -33,7 +34,7 @@ route.post("/create", async (req, res) => {
     });
   } catch (err) {
     console.log("error", err);
-    return res.status(200).json({
+    return res.status(400).json({
       success: false,
       message: "Something went wrong",
     });
