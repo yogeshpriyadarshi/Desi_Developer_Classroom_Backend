@@ -1,6 +1,6 @@
 const express = require("express");
 const Interview = require("./interview.model");
-const authMiddleware = require("../auth/auth.middleware");
+const { authMiddleware } = require("../auth/auth.middleware");
 
 const router = express.Router();
 

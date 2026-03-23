@@ -1,43 +1,49 @@
 const express = require("express");
 const SubjectSchema = require("./subject.model");
+const { authMiddleware, roleMiddleware } = require("../auth/auth.middleware");
 
 const route = express.Router();
 
-route.post("/create", async (req, res) => {
-  try {
-    const { name, description } = req.body;
-    if (!name) {
+route.post(
+  "/create",
+  authMiddleware,
+  roleMiddleware("admin"),
+  async (req, res) => {
+    try {
+      const { name, description } = req.body;
+      if (!name) {
+        return res.status(400).json({
+          success: false,
+          message: "Subject name is required",
+        });
+      }
+
+      const subject = await SubjectSchema.findOne({ name });
+      if (subject) {
+        return res.status(400).json({
+          success: false,
+          message: "Subject already exists",
+        });
+      }
+
+      const createdSubject = await SubjectSchema.create({
+        name,
+        description,
+      });
+      res.status(201).json({
+        success: true,
+        message: "Subject created successfully",
+        subject: createdSubject,
+      });
+    } catch (err) {
+      console.log("error", err);
       return res.status(400).json({
         success: false,
-        message: "Subject name is required",
+        message: "Something went wrong",
       });
     }
-
-    const subject = await SubjectSchema.findOne({ name });
-    if (subject) {
-      return res.status(400).json({
-        success: false,
-        message: "Subject already exists",
-      });
-    }
-
-    const createdSubject = await SubjectSchema.create({
-      name,
-      description,
-    });
-    res.status(201).json({
-      success: true,
-      message: "Subject created successfully",
-      subject: createdSubject,
-    });
-  } catch (err) {
-    console.log("error", err);
-    return res.status(400).json({
-      success: false,
-      message: "Something went wrong",
-    });
-  }
-});
+  },
+);
 
 route.get("/", async (req, res) => {
   try {
@@ -58,7 +64,7 @@ route.get("/", async (req, res) => {
 
 // update subject
 
-route.put("/:id", async (req, res) => {
+route.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description } = req.body;
@@ -93,7 +99,7 @@ route.put("/:id", async (req, res) => {
   }
 });
 
-route.patch("/:id/toggle-status", async (req, res) => {
+route.patch("/:id/toggle-status", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params();
     const subject = await SubjectSchema.findById(id);

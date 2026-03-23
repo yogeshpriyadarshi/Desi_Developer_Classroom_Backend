@@ -6,7 +6,7 @@ const {
   verifyToken,
   logout,
 } = require("./auth.controller");
-const authMiddleware = require("./auth.middleware");
+const { authMiddleware } = require("./auth.middleware");
 
 const route = express.Router();
 route.post("/signup", signup);

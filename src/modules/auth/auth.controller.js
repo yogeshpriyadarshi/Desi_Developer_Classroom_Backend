@@ -44,14 +44,14 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(200).json({
+      return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
     const user = await UserSchema.findOne({ email });
     if (!user) {
-      return res.status(200).json({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });

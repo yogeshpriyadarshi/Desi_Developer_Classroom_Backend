@@ -7,7 +7,7 @@ const {
   changeStatus,
   getTodoListForDay,
 } = require("./todolist.controller");
-const authMiddleware = require("../auth/auth.middleware");
+const { authMiddleware } = require("../auth/auth.middleware");
 
 const route = express.Router();
 

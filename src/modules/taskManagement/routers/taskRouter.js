@@ -1,5 +1,5 @@
 const express = require("express");
-const authMiddleware = require("../../auth/auth.middleware");
+const { authMiddleware } = require("../../auth/auth.middleware");
 const {
   addCategory,
   getAllCategory,

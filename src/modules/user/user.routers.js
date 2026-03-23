@@ -1,6 +1,6 @@
 const express = require("express");
 const UserSchema = require("./user.mdoel");
-const authMiddleware = require("../auth/auth.middleware");
+const { authMiddleware } = require("../auth/auth.middleware");
 
 const route = express.Router();
 
