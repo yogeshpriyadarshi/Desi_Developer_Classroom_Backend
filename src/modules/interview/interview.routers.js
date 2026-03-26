@@ -52,16 +52,23 @@ router.get("/", async (req, res) => {
 });
 
 // interview topic wise
-router.get("/:topic", async (req, res) => {
+router.get("/fetch-by-topic/:topic", async (req, res) => {
   try {
     const { topic } = req.params;
+    const { difficulty, status, isPremium } = req.query;
     if (!topic) {
       return res.status(400).json({
         success: false,
         message: "topic field is required",
       });
     }
-    const interviews = await Interview.find({ topic });
+    const filter = {
+      topic,
+    };
+    if (difficulty) filter.difficulty = difficulty;
+    if (status) filter.status = status;
+    if (isPremium) filter.isPremium = isPremium;
+    const interviews = await Interview.find(filter);
     return res.status(200).json({
       success: true,
       message: "interviews fetched successfully",
