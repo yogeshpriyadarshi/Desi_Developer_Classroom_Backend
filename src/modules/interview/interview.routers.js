@@ -51,6 +51,31 @@ router.get("/", async (req, res) => {
   }
 });
 
+// fetch by Id
+router.get("/fetch/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const interview = await Interview.findById(id);
+    if (!interview) {
+      return res.status(400).json({
+        success: false,
+        message: "interview not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "interview fetched successfully",
+      interview,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
 // interview topic wise
 router.get("/fetch-by-topic/:topic", async (req, res) => {
   try {
@@ -77,6 +102,44 @@ router.get("/fetch-by-topic/:topic", async (req, res) => {
   } catch (err) {
     console.log("error", err);
     return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+// update interview
+router.put("/update/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { question, explanation, topic, status, isPremium } = req.body;
+    if (!question || !topic) {
+      return res.status(400).json({
+        success: false,
+        message: "question and topic fields are required",
+      });
+    }
+    const interview = await Interview.findById(id);
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: "interview not found",
+      });
+    }
+    interview.question = question;
+    interview.explanation = explanation;
+    interview.topic = topic;
+    interview.status = status;
+    interview.isPremium = isPremium;
+    await interview.save();
+    return res.status(200).json({
+      success: true,
+      message: "interview updated successfully",
+      interview,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(500).json({
       success: false,
       message: "Something went wrong",
     });
