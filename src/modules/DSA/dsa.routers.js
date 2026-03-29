@@ -88,13 +88,20 @@ router.get("/fetch-by-topic/:topic", async (req, res) => {
 router.get("/:topic", async (req, res) => {
   try {
     const { topic } = req.params;
+    const { difficulty, status, isPremium } = req.query;
     if (!topic) {
       return res.status(400).json({
         success: false,
         message: "topic field is required",
       });
     }
-    const dsas = await DSA.find({ topic });
+    const filter = {
+      topic,
+    };
+    if (difficulty) filter.difficulty = difficulty;
+    if (status) filter.status = status;
+    if (isPremium) filter.isPremium = isPremium;
+    const dsas = await DSA.find(filter);
     return res.status(200).json({
       success: true,
       message: "DSAs fetched successfully",
@@ -103,6 +110,60 @@ router.get("/:topic", async (req, res) => {
   } catch (err) {
     console.log("error", err);
     return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+//update dsa
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      question,
+      explanation,
+      topic,
+      status,
+      isPremium,
+      difficulty,
+      source,
+      sourceLink,
+      videoLink,
+      orderNumber,
+    } = req.body;
+    if (!title || !question || !topic) {
+      return res.status(400).json({
+        success: false,
+        message: "title, question and topic fields are required",
+      });
+    }
+    const updatedDSA = await DSA.findByIdAndUpdate(
+      id,
+      {
+        title,
+        question,
+        explanation,
+        topic,
+        status,
+        isPremium,
+        difficulty,
+        source,
+        sourceLink,
+        videoLink,
+        orderNumber,
+      },
+      { new: true },
+    );
+    return res.status(200).json({
+      success: true,
+      message: "DSA updated successfully",
+      dsa: updatedDSA,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(400).json({
       success: false,
       message: "Something went wrong",
     });
