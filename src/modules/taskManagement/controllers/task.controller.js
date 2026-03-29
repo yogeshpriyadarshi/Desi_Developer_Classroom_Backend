@@ -6,17 +6,7 @@ const addTask = async (req, res) => {
   try {
     const category = req.params.categoryId;
 
-    const {
-      title,
-      description,
-      priority,
-      recurrenceType,
-      interval,
-      daysOfWeek,
-      dayOfMonth,
-      startDate,
-      endDate,
-    } = req.body;
+    const { title, description } = req.body;
 
     // validation
     if (!title || !category) {
@@ -31,12 +21,6 @@ const addTask = async (req, res) => {
       description,
       category,
       user: req.user.id,
-      priority,
-      recurrenceType,
-      daysOfWeek,
-      dayOfMonth,
-      startDate,
-      endDate,
     });
 
     return res.status(201).json({

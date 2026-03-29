@@ -20,40 +20,18 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
-    priority: {
-      type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
-    },
-
     isActive: {
       type: Boolean,
       default: true,
     },
-
     isCompleted: {
       type: Boolean,
       default: false,
     },
-
-    recurrenceType: {
-      type: String,
-      enum: ["daily", "weekly", "monthly", "yearly"],
-      default: "daily",
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
-
-    interval: {
-      type: Number,
-      default: 1,
-    },
-
-    daysOfWeek: [Number],
-
-    dayOfMonth: Number,
-
-    startDate: Date,
-
-    endDate: Date,
   },
   { timestamps: true },
 );
