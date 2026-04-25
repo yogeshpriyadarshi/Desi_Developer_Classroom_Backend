@@ -6,11 +6,11 @@ const route = express.Router();
 // create topic
 route.post("/create", async (req, res) => {
   try {
-    const { name, description, subject } = req.body;
-    if (!name || !subject) {
+    const { name, description, subject, slug } = req.body;
+    if (!name || !subject || !slug) {
       return res.status(200).json({
         success: false,
-        message: "Topic name and subject ID are required",
+        message: "Topic name, subject ID, and slug are required",
       });
     }
 
@@ -26,6 +26,7 @@ route.post("/create", async (req, res) => {
       name,
       description,
       subject,
+      slug,
     });
     res.status(201).json({
       success: true,
@@ -81,6 +82,33 @@ route.get("/fetch-by-subject/:subjectId", async (req, res) => {
   }
 });
 
+// find topic by slug
+route.get("/fetch-by-slug/:slug", async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const topic = await TopicSchema.findOne({ slug, status: "active" }).populate(
+      "subject",
+    );
+    if (!topic) {
+      return res.status(200).json({
+        success: false,
+        message: "Topic not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Topic fetched successfully",
+      topic,
+    });
+  } catch (err) {
+    console.log("error", err);
+    return res.status(200).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
 // find topic by name  (regex)
 route.get("/search", async (req, res) => {
   try {
@@ -107,11 +135,11 @@ route.get("/search", async (req, res) => {
 route.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, subject } = req.body;
-    if (!name || !subject) {
+    const { name, description, subject, slug } = req.body;
+    if (!name || !subject || !slug) {
       return res.status(200).json({
         success: false,
-        message: "Topic name and subject ID are required",
+        message: "Topic name, subject ID, and slug are required",
       });
     }
     const topic = await TopicSchema.findById(id);
@@ -124,6 +152,7 @@ route.put("/:id", async (req, res) => {
     topic.name = name;
     topic.description = description;
     topic.subject = subject;
+    topic.slug = slug;
     await topic.save();
     res.status(200).json({
       success: true,

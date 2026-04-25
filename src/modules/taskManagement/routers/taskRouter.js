@@ -29,6 +29,10 @@ const {
   getTaskLog,
   getTaskLogByDate,
   updateTaskLogByTaskId,
+  getTotalTimeSpentOnTaskByDate,
+  getTotalTimeSpentOnTaskByMonth,
+  getTotalTimeSpentOnTaskByYear,
+  getTotalTimeSpentOnTaskBySpecificDate,
 } = require("../controllers/task-log.controller");
 
 const router = express.Router();
@@ -100,4 +104,15 @@ router.get("/task-log/:taskId", authMiddleware, getTaskLog);
 // update task log
 router.put("/task-log/:taskId", authMiddleware, updateTaskLogByTaskId);
 
+//get total time spent on a task on a specific date month year
+router.get("/task-log/total-time/date/:taskId/:date", authMiddleware, getTotalTimeSpentOnTaskByDate);
+router.get("/task-log/total-time/month/:taskId/:month", authMiddleware, getTotalTimeSpentOnTaskByMonth);
+router.get("/task-log/total-time/year/:taskId/:year", authMiddleware, getTotalTimeSpentOnTaskByYear);
+
+// get total time spent on a task on a specific date month year
+router.get(
+  "/task-log/total-time/specific-date/:taskId/:date",
+  authMiddleware,
+  getTotalTimeSpentOnTaskBySpecificDate,
+);
 module.exports = router;

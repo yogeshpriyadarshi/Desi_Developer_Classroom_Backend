@@ -19,6 +19,13 @@ const topicSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
 
     status: {
       type: String,
